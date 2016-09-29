@@ -1,0 +1,10 @@
+.idea/
+*.iml
+*.iws
+*.ipr
+build/
+.gradle
+target/
+
+# Mac
+.DS_Store
