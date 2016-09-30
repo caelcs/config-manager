@@ -78,15 +78,14 @@ dependencies {
     compile("org.springframework.boot:spring-boot-starter-aop")
     compile("org.springframework.boot:spring-boot-starter-web")
     compile("org.springframework.boot:spring-boot-starter-actuator")
+    compile("org.springframework.boot:spring-boot-starter-data-redis")
     compile("org.springframework.security.oauth:spring-security-oauth2:${springSecurityOauth2Version}")
     compile("org.springframework.hateoas:spring-hateoas")
     compile("org.springframework.boot:spring-boot-starter-tomcat")
     compile("com.google.code.gson:gson:${gsonVersion}")
     compile("com.google.guava:guava:${guavaVersion}")
-    compile("org.mongodb:mongo-java-driver:${mongoDriver}")
 
     compile("uk.co.caeldev:spring-mvc-utils:${springMvcUtilsVersion}")
-    compile("uk.co.caeldev:spring-morphia:${springMorphiaVersion}")
 
     compile("org.apache.commons:commons-lang3:${apacheCommonsLang3Version}")
 
@@ -96,7 +95,6 @@ dependencies {
     testCompile("uk.org.fyodor:fyodor-junit:${fyodorVersion}")
     testCompile("com.jayway.restassured:rest-assured:${restAssuredVersion}")
     testCompile("com.github.tomakehurst:wiremock:${wiremockVersion}")
-    testCompile("com.github.fakemongo:fongo:${fongoVersion}")
     testCompile("info.cukes:cucumber-java:${cucumberVersion}")
     testCompile("info.cukes:cucumber-junit:${cucumberVersion}")
     testCompile("info.cukes:cucumber-spring:${cucumberVersion}")

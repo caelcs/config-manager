@@ -5,6 +5,7 @@
 build/
 .gradle
 target/
+classes
 
 # Mac
 .DS_Store
