@@ -1,6 +1,9 @@
 # Config Manager Api
 
+[![Build Status](https://travis-ci.org/caelwinner/config-manager.svg?branch=master)](https://travis-ci.org/caelwinner/config-manager)
+
 ## Overview
+
 Rest Application that provides access to endpoints in order to store and provides access to configuration entries.
  
 ## Requierments
