@@ -123,4 +123,19 @@ public class CustomSettingServiceTest {
         // Then
         assertThat(credentials.isPresent()).isFalse();
     }
+
+    @Test
+    public void shouldPublishAllCustomSettings() throws Exception {
+        //Given
+        final String env = string().next();
+
+        //And
+        //given(strin)
+
+        //When
+        final boolean result = customSettingService.publishAll(env);
+
+        //Then
+        assertThat(result).isTrue();
+    }
 }

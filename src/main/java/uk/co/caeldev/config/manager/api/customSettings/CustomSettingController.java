@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.Map;
 import java.util.Optional;
 
+import static org.springframework.http.HttpStatus.*;
+
 @RestController
 public class CustomSettingController {
 
@@ -27,7 +29,7 @@ public class CustomSettingController {
         Optional<String> value = customSettingService.getOne(env, key);
 
         if (!value.isPresent()) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(NOT_FOUND);
         }
 
         return ResponseEntity.ok(value.get());
@@ -38,9 +40,19 @@ public class CustomSettingController {
         Optional<Map<String, String>> credentials = customSettingService.getCredentials(env);
 
         if (!credentials.isPresent()) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(NOT_FOUND);
         }
 
         return ResponseEntity.ok(credentials.get());
+    }
+
+    public ResponseEntity publishAll(String env) {
+        final boolean result = customSettingService.publishAll(env);
+
+        if (!result) {
+            return new ResponseEntity(INTERNAL_SERVER_ERROR);
+        }
+
+        return new ResponseEntity(CREATED);
     }
 }

@@ -3,16 +3,17 @@ package uk.co.caeldev.config.manager.api.customSettings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class CustomSettingService {
 
+    public static final String NAMESPACE_SEPARATOR = ":";
     public static final String ONE_VALUE = "%s:%s";
-    public static final String CREDENTIAL_KEYS = "%s:credentials.*";
+    public static final String CREDENTIALS_PREFIX = "credentials";
+    public static final String CREDENTIAL_KEYS = "%s:" + CREDENTIALS_PREFIX + ".*";
+    public static final String ALL_KEYS_BY_ENV = "%s:*";
+
     private final StringRedisTemplate stringRedisTemplate;
 
     @Autowired
@@ -38,5 +39,25 @@ public class CustomSettingService {
                         key -> stringRedisTemplate.opsForValue().get(key)));
 
         return Optional.of(result);
+    }
+
+    public boolean publishAll(String env) {
+        final Set<String> allKeys = stringRedisTemplate.keys(String.format(ALL_KEYS_BY_ENV, env));
+        final Map<String, String> keyValuePairs = allKeys.stream()
+                .filter(key -> key.contains(CREDENTIALS_PREFIX))
+                .map(this::removeNameSpace)
+                .collect(Collectors.toMap(key -> key,
+                        key -> stringRedisTemplate.opsForValue()
+                                .get(String.format(ONE_VALUE, env, key))));
+
+
+        //Generate Json
+        //Invoke api
+        return false;
+    }
+
+    private String removeNameSpace(String key) {
+        final String[] split = key.split(NAMESPACE_SEPARATOR);
+        return split[1];
     }
 }

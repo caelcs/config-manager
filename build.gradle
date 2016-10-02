@@ -88,6 +88,9 @@ dependencies {
     compile("uk.co.caeldev:spring-mvc-utils:${springMvcUtilsVersion}")
 
     compile("org.apache.commons:commons-lang3:${apacheCommonsLang3Version}")
+    compile group: 'com.github.mideo', name:'salesforce-api-client', version: '0.0.1'
+    compile group: 'net.sf.supercsv', name: 'super-csv', version: '2.4.0'
+    compile group: 'net.sf.supercsv', name: 'super-csv-java8', version: '2.4.0'
 
     testCompile("org.springframework.boot:spring-boot-starter-test")
     testCompile("org.assertj:assertj-core:${assertjCoreVersion}")

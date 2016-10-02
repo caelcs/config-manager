@@ -1,5 +1,6 @@
 package uk.co.caeldev.config.manager.api.customSettings;
 
+import org.apache.catalina.connector.Response;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -12,8 +13,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
-import static org.springframework.http.HttpStatus.NOT_FOUND;
-import static org.springframework.http.HttpStatus.OK;
+import static org.springframework.http.HttpStatus.*;
 import static uk.org.fyodor.generators.RDG.map;
 import static uk.org.fyodor.generators.RDG.string;
 
@@ -98,5 +98,35 @@ public class CustomSettingControllerTest {
         // Then
         assertThat(responseEntity.getStatusCode()).isEqualTo(NOT_FOUND);
         assertThat(responseEntity.getBody()).isNull();
+    }
+
+    @Test
+    public void shouldPublishCustomSettings() throws Exception {
+        //Given
+        final String env = string().next();
+
+        //And
+        given(customSettingService.publishAll(env)).willReturn(true);
+
+        //When
+        final ResponseEntity response = customSettingController.publishAll(env);
+
+        //Then
+        assertThat(response.getStatusCode()).isEqualTo(CREATED);
+    }
+
+    @Test
+    public void shouldReturnErrorWhenPublishCustomSettingsHasFailed() throws Exception {
+        //Given
+        final String env = string().next();
+
+        //And
+        given(customSettingService.publishAll(env)).willReturn(false);
+
+        //When
+        final ResponseEntity response = customSettingController.publishAll(env);
+
+        //Then
+        assertThat(response.getStatusCode()).isEqualTo(INTERNAL_SERVER_ERROR);
     }
 }
