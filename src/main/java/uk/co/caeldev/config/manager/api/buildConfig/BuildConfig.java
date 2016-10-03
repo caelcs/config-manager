@@ -8,6 +8,7 @@ import java.util.Map;
 
 public class BuildConfig {
 
+    private String environment;
     private Map<String, String> attributes;
 
     public Map<String, String> getAttributes() {
@@ -16,6 +17,14 @@ public class BuildConfig {
 
     public void setAttributes(Map<String, String> attributes) {
         this.attributes = attributes;
+    }
+
+    public String getEnvironment() {
+        return environment;
+    }
+
+    public void setEnvironment(String environment) {
+        this.environment = environment;
     }
 
     @Override

@@ -4,3 +4,14 @@ mongo:
   database: development
   username: salesforceAdmin
   password: iamsalesforce
+
+---
+
+spring:
+    profiles: test
+mongo:
+  host: test
+  port: 0
+  database: test
+  username: test
+  password: test

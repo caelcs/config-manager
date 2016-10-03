@@ -1,6 +1,7 @@
 package uk.co.caeldev.config.manager.api.buildConfig.tests;
 
 import uk.co.caeldev.config.manager.api.buildConfig.BuildConfig;
+import uk.org.fyodor.generators.characters.CharacterSetFilter;
 
 import java.util.Map;
 
@@ -9,7 +10,8 @@ import static uk.org.fyodor.generators.RDG.string;
 
 public class BuildConfigBuilder {
 
-    private Map<String, String> attributes = map(string(), string()).next();
+    private String environment = string().next();
+    private Map<String, String> attributes = map(string(15, CharacterSetFilter.DomainName), string()).next();
 
     BuildConfigBuilder() {
     }
@@ -21,6 +23,7 @@ public class BuildConfigBuilder {
     public BuildConfig build() {
         BuildConfig buildConfig = new BuildConfig();
         buildConfig.setAttributes(attributes);
+        buildConfig.setEnvironment(environment);
         return buildConfig;
     }
 }
