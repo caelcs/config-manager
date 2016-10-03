@@ -4,6 +4,3 @@ mongo:
   database: development
   username: salesforceAdmin
   password: iamsalesforce
-
-morphia:
-  entityPackage: uk.co.caeldev.config.manager.api
