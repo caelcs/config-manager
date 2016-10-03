@@ -78,17 +78,21 @@ dependencies {
     compile("org.springframework.boot:spring-boot-starter-aop")
     compile("org.springframework.boot:spring-boot-starter-web")
     compile("org.springframework.boot:spring-boot-starter-actuator")
-    compile("org.springframework.boot:spring-boot-starter-data-redis")
     compile("org.springframework.security.oauth:spring-security-oauth2:${springSecurityOauth2Version}")
     compile("org.springframework.hateoas:spring-hateoas")
     compile("org.springframework.boot:spring-boot-starter-tomcat")
     compile("com.google.code.gson:gson:${gsonVersion}")
     compile("com.google.guava:guava:${guavaVersion}")
 
+    compile("uk.co.caeldev:spring-morphia:0.1.0")
+    compile group: 'org.mongodb', name: 'mongo-java-driver', version: '3.3.0'
+
     compile("uk.co.caeldev:spring-mvc-utils:${springMvcUtilsVersion}")
 
     compile("org.apache.commons:commons-lang3:${apacheCommonsLang3Version}")
     compile group: 'com.github.mideo', name:'salesforce-api-client', version: '0.0.1'
+    compile group: 'org.codehaus.groovy', name: 'groovy-all', version: '2.4.4'
+    compile group: 'org.codehaus.groovy', name: 'groovy-xml', version: '2.4.4'
     compile group: 'net.sf.supercsv', name: 'super-csv', version: '2.4.0'
     compile group: 'net.sf.supercsv', name: 'super-csv-java8', version: '2.4.0'
 

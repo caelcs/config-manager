@@ -1,4 +1,9 @@
-spring:
-  redis:
-    host: localhost
-    port: 6379
+mongo:
+  host: localhost
+  port: 27017
+  database: development
+  username: salesforceAdmin
+  password: iamsalesforce
+
+morphia:
+  entityPackage: uk.co.caeldev.config.manager.api
