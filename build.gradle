@@ -98,7 +98,7 @@ dependencies {
     testCompile("org.assertj:assertj-core:${assertjCoreVersion}")
     testCompile("uk.org.fyodor:fyodor-core:${fyodorVersion}")
     testCompile("uk.org.fyodor:fyodor-junit:${fyodorVersion}")
-    testCompile("com.jayway.restassured:rest-assured:${restAssuredVersion}")
+    testCompile("io.rest-assured:rest-assured:${restAssuredVersion}")
     testCompile("com.github.tomakehurst:wiremock:${wiremockVersion}")
     testCompile("com.github.fakemongo:fongo:${fongoVersion}")
 }
