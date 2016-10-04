@@ -10,6 +10,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.verify;
 import static uk.co.caeldev.config.manager.api.buildConfig.tests.BuildConfigBuilder.buildConfigBuilder;
 import static uk.org.fyodor.generators.RDG.string;
 
@@ -59,5 +60,28 @@ public class BuildConfigServiceTest {
 
         //Then
         assertThat(result.isPresent()).isFalse();
+    }
+
+    @Test
+    public void shouldCloneBuildConfig() throws Exception {
+        //Given
+        final String sourceEnv = string().next();
+        final String targetEnv = string().next();
+
+        //And
+        final BuildConfig sourceBuildConfig = buildConfigBuilder().build();
+        given(buildConfigRepository.findOne(sourceEnv)).willReturn(Optional.of(sourceBuildConfig));
+
+        //And
+        given(buildConfigRepository.findOne(targetEnv)).willReturn(Optional.empty());
+
+        //When
+        final BuildConfig targetBuildConfig = buildConfigService.cloneBuildConfig(sourceEnv, targetEnv);
+
+        //Then
+        sourceBuildConfig.setEnvironment(targetEnv);
+        assertThat(targetBuildConfig).isNotNull();
+        assertThat(targetBuildConfig).isEqualTo(sourceBuildConfig);
+        verify(buildConfigRepository).save(sourceBuildConfig);
     }
 }

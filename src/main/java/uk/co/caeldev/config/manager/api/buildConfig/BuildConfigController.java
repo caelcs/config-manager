@@ -4,16 +4,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
 public class BuildConfigController {
 
+    public static final String SOURCE_ENV_PARAM = "sourceEnv";
+    public static final String TARGET_ENV_PARAM = "targetEnv";
     private final BuildConfigService buildConfigService;
 
     @Autowired
@@ -32,5 +32,21 @@ public class BuildConfigController {
         }
 
         return ResponseEntity.ok(buildConfigOptional.get());
+    }
+
+    @RequestMapping(value = "/buildconfigs/clone",
+            method = {RequestMethod.POST},
+            produces = {MediaType.APPLICATION_JSON_UTF8_VALUE},
+            consumes = {MediaType.APPLICATION_JSON_UTF8_VALUE})
+    public ResponseEntity<BuildConfig> cloneBuildConfig(@RequestBody Map<String, String> request) {
+        final String sourceEnv = request.get(SOURCE_ENV_PARAM);
+        final String targetEnv = request.get(TARGET_ENV_PARAM);
+
+        try {
+            final BuildConfig result = buildConfigService.cloneBuildConfig(sourceEnv, targetEnv);
+            return ResponseEntity.status(HttpStatus.CREATED).body(result);
+        } catch (IllegalArgumentException ex) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 }
