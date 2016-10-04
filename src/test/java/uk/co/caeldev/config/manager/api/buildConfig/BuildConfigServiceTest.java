@@ -5,10 +5,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
-import uk.co.caeldev.config.manager.api.buildConfig.tests.BuildConfigBuilder;
 
 import java.util.Optional;
 
@@ -48,5 +44,20 @@ public class BuildConfigServiceTest {
         assertThat(result.isPresent()).isTrue();
         assertThat(result.get()).isNotNull();
         assertThat(result.get()).isEqualTo(expectedBuildConfig.get());
+    }
+
+    @Test
+    public void shouldNotFoundBuildConfigWhenEnvironmentIsNotValid() throws Exception {
+        //Given
+        final String env = string().next();
+
+        //And
+        given(buildConfigRepository.findOne(env)).willReturn(Optional.empty());
+
+        //When
+        final Optional<BuildConfig> result = buildConfigService.getOne(env);
+
+        //Then
+        assertThat(result.isPresent()).isFalse();
     }
 }
