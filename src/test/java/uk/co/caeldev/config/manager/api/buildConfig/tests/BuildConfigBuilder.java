@@ -26,4 +26,9 @@ public class BuildConfigBuilder {
         buildConfig.setEnvironment(environment);
         return buildConfig;
     }
+
+    public BuildConfigBuilder environment(String environment) {
+        this.environment = environment;
+        return this;
+    }
 }
