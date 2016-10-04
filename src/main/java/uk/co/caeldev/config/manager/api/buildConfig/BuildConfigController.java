@@ -21,7 +21,7 @@ public class BuildConfigController {
         this.buildConfigService = buildConfigService;
     }
 
-    @RequestMapping(path = "/buildconfigs/{env}",
+    @RequestMapping(value = "/buildconfigs/{env}",
             method = RequestMethod.GET,
             produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
     public ResponseEntity<BuildConfig> getBuildConfig(@PathVariable String env) {

@@ -8,6 +8,7 @@ import org.bson.Document;
 import org.springframework.beans.factory.annotation.Autowired;
 import uk.co.caeldev.spring.moprhia.MongoSettings;
 
+import java.util.Objects;
 import java.util.Optional;
 
 import static com.mongodb.client.model.Filters.eq;
@@ -35,6 +36,9 @@ public class BuildConfigRepository {
 
     public Optional<BuildConfig> findOne(String env) {
         final Document buildConfigResult = db.getCollection(BUILD_CONFIG).find(eq("environment", env)).first();
+        if (Objects.isNull(buildConfigResult)) {
+            return Optional.empty();
+        }
         final BuildConfig buildConfig = gson.fromJson(buildConfigResult.toJson(), BuildConfig.class);
         return Optional.ofNullable(buildConfig);
     }
