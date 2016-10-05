@@ -50,7 +50,10 @@ public class BuildConfigController {
         }
     }
 
-    @RequestMapping(value = "/buildconfigs", method = {RequestMethod.POST}, consumes = {MediaType.APPLICATION_JSON_UTF8_VALUE}, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
+    @RequestMapping(value = "/buildconfigs",
+            method = {RequestMethod.POST},
+            consumes = {MediaType.APPLICATION_JSON_UTF8_VALUE},
+            produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
     public ResponseEntity<BuildConfig> create(@RequestBody final BuildConfig buildConfig) {
         try {
             buildConfigService.create(buildConfig);
@@ -60,7 +63,8 @@ public class BuildConfigController {
         }
     }
 
-    @RequestMapping(value = "/buildconfigs/{env}", method = {RequestMethod.DELETE})
+    @RequestMapping(value = "/buildconfigs/{env}",
+            method = {RequestMethod.DELETE})
     public ResponseEntity delete(@PathVariable String env) {
         try {
             buildConfigService.deleteBuildConfig(env);
@@ -68,5 +72,20 @@ public class BuildConfigController {
         } catch(IllegalArgumentException ex) {
             return new ResponseEntity(HttpStatus.NOT_FOUND);
         }
+    }
+
+    @RequestMapping(value = "/buildconfigs/{env}",
+            method = {RequestMethod.POST},
+            consumes = {MediaType.APPLICATION_JSON_UTF8_VALUE},
+            produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
+    public ResponseEntity<BuildConfig> update(@PathVariable String env,
+                                              @RequestBody final BuildConfig buildConfig) {
+        final Optional<BuildConfig> buildConfigUpdated = buildConfigService.update(env, buildConfig);
+
+        if (!buildConfigUpdated.isPresent()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        return ResponseEntity.ok(buildConfigUpdated.get());
     }
 }

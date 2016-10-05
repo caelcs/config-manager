@@ -201,4 +201,38 @@ public class BuildConfigServiceTest {
         //Then
         verify(buildConfigRepository, never()).delete(env);
     }
+
+    @Test
+    public void shouldUpdateBuildConfig() {
+        //Given
+        String env = string().next();
+        final BuildConfig buildConfig = buildConfigBuilder().environment(env).build();
+
+        //And
+        final BuildConfig expectedBuildConfigUpdated = buildConfigBuilder().environment(env).build();
+        given(buildConfigRepository.findOneAndUpdate(env, buildConfig)).willReturn(Optional.of(expectedBuildConfigUpdated));
+
+        //When
+        final Optional<BuildConfig> buildConfigUpdated = buildConfigService.update(env, buildConfig);
+
+        //Then
+        assertThat(buildConfigUpdated.isPresent()).isTrue();
+        assertThat(buildConfigUpdated.get()).isEqualTo(expectedBuildConfigUpdated);
+    }
+
+    @Test
+    public void shouldFailUpdateBuildConfigWhenBuildConfigDoesNotExist() {
+        //Given
+        String env = string().next();
+        final BuildConfig buildConfig = buildConfigBuilder().environment(env).build();
+
+        //And
+        given(buildConfigRepository.findOneAndUpdate(env, buildConfig)).willReturn(Optional.empty());
+
+        //When
+        final Optional<BuildConfig> buildConfigUpdated = buildConfigService.update(env, buildConfig);
+
+        //Then
+        assertThat(buildConfigUpdated.isPresent()).isFalse();
+    }
 }

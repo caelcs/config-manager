@@ -11,6 +11,7 @@ import uk.co.caeldev.config.manager.api.BaseIntegrationTest;
 import uk.org.fyodor.generators.characters.CharacterSetFilter;
 
 import static io.restassured.RestAssured.given;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.springframework.http.HttpStatus.*;
 import static uk.co.caeldev.config.manager.api.buildConfig.tests.BuildConfigBuilder.buildConfigBuilder;
@@ -94,5 +95,28 @@ public class BuildConfigApiTest extends BaseIntegrationTest {
         .then()
             .assertThat()
                 .statusCode(equalTo(NO_CONTENT.value()));
+    }
+
+    @Test
+    public void shouldUpdateBuildConfig() {
+        //Given
+        final BuildConfig buildConfig = buildConfigBuilder().build();
+        buildConfigRepository.save(buildConfig);
+
+        final BuildConfig requestBody = buildConfigBuilder().environment(buildConfig.getEnvironment()).build();
+
+        final BuildConfig result = given()
+                .port(serverPort)
+                .body(requestBody)
+                .headers(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_UTF8_VALUE)
+                .when()
+                .post(String.format("/buildconfigs/%s", buildConfig.getEnvironment()))
+                .then()
+                .assertThat()
+                .statusCode(equalTo(OK.value())).extract().body().as(BuildConfig.class);
+
+        //Then
+        assertThat(result.getAttributes()).containsAllEntriesOf(buildConfig.getAttributes());
+        assertThat(result.getAttributes()).containsAllEntriesOf(requestBody.getAttributes());
     }
 }

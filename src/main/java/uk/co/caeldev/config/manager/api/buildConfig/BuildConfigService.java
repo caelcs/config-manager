@@ -23,7 +23,8 @@ public class BuildConfigService {
         return buildConfigRepository.findOne(env);
     }
 
-    public BuildConfig cloneBuildConfig(String sourceEnv, String targetEnv) {
+    public BuildConfig cloneBuildConfig(String sourceEnv,
+                                        String targetEnv) {
         final Optional<BuildConfig> sourceBuildConfig = buildConfigRepository.findOne(sourceEnv);
         final Optional<BuildConfig> targetBuildConfig = buildConfigRepository.findOne(targetEnv);
 
@@ -49,5 +50,10 @@ public class BuildConfigService {
         Optional<BuildConfig> existingBuildConfig = buildConfigRepository.findOne(env);
         checkArgument(existingBuildConfig.isPresent(), BUILD_CONFIG_DOES_NOT_EXIST_DELETION_ABORTED);
         buildConfigRepository.delete(env);
+    }
+
+    public Optional<BuildConfig> update(String env,
+                              final BuildConfig buildConfig) {
+        return buildConfigRepository.findOneAndUpdate(env, buildConfig);
     }
 }

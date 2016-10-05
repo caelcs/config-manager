@@ -15,7 +15,6 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.springframework.http.HttpStatus.*;
 import static uk.co.caeldev.config.manager.api.buildConfig.BuildConfigController.SOURCE_ENV_PARAM;
@@ -157,5 +156,39 @@ public class BuildConfigControllerTest {
 
         // Then
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+    }
+
+    @Test
+    public void shouldFailUpdateBuildConfigWhenDoesNotExist() {
+        // Given
+        final BuildConfig buildConfig = buildConfigBuilder().build();
+        String env = string().next();
+
+        //And
+        given(buildConfigService.update(env, buildConfig)).willReturn(Optional.empty());
+
+        // When
+        final ResponseEntity<BuildConfig> response = buildConfigController.update(env, buildConfig);
+
+        // Then
+        assertThat(response.getStatusCode()).isEqualTo(NOT_FOUND);
+    }
+
+    @Test
+    public void shouldUpdateBuildConfig() {
+        // Given
+        final BuildConfig buildConfig = buildConfigBuilder().build();
+        String env = string().next();
+
+        //And
+        final BuildConfig expectedBuildConfigUpdated = buildConfigBuilder().environment(env).build();
+        given(buildConfigService.update(env, buildConfig)).willReturn(Optional.of(expectedBuildConfigUpdated));
+
+        // When
+        final ResponseEntity<BuildConfig> response = buildConfigController.update(env, buildConfig);
+
+        // Then
+        assertThat(response.getStatusCode()).isEqualTo(OK);
+        assertThat(response.getBody()).isEqualTo(expectedBuildConfigUpdated);
     }
 }

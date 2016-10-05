@@ -5,13 +5,18 @@ import com.mongodb.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import org.bson.Document;
+import org.bson.conversions.Bson;
 import org.springframework.beans.factory.annotation.Autowired;
 import uk.co.caeldev.spring.moprhia.MongoSettings;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static com.mongodb.client.model.Filters.eq;
+import static com.mongodb.client.model.Updates.combine;
+import static com.mongodb.client.model.Updates.set;
 
 public class BuildConfigRepository {
 
@@ -46,5 +51,21 @@ public class BuildConfigRepository {
 
     public void delete(String env) {
         db.getCollection(BUILD_CONFIG).deleteOne(eq(ENVIRONMENT, env));
+    }
+
+    public Optional<BuildConfig> findOneAndUpdate(String env,
+                                                  final BuildConfig buildConfig) {
+
+        final List<Bson> updates = buildConfig.getAttributes().entrySet()
+                .stream()
+                .map(entrySet -> set(entrySet.getKey(), entrySet.getValue()))
+                .collect(Collectors.toList());
+
+        final Document buildConfigDoc = db.getCollection(BUILD_CONFIG).findOneAndUpdate(eq(ENVIRONMENT, env), combine(updates));
+
+        if (Objects.isNull(buildConfigDoc)) {
+            return Optional.empty();
+        }
+        return Optional.of(gson.fromJson(buildConfigDoc.toJson(), BuildConfig.class));
     }
 }
