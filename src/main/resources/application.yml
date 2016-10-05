@@ -1,4 +1,17 @@
+mongo:
+  host: localhost
+  port: 27017
+  database: development
+  username: salesforceAdmin
+  password: iamsalesforce
+
+---
+
 spring:
-  redis:
-    host: localhost
-    port: 6379
+    profiles: test
+mongo:
+  host: test
+  port: 0
+  database: test
+  username: test
+  password: test

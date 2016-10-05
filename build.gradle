@@ -74,30 +74,33 @@ configurations {
 }
 
 dependencies {
-    compile("org.springframework.boot:spring-boot-starter-security")
     compile("org.springframework.boot:spring-boot-starter-aop")
     compile("org.springframework.boot:spring-boot-starter-web")
     compile("org.springframework.boot:spring-boot-starter-actuator")
-    compile("org.springframework.boot:spring-boot-starter-data-redis")
-    compile("org.springframework.security.oauth:spring-security-oauth2:${springSecurityOauth2Version}")
     compile("org.springframework.hateoas:spring-hateoas")
     compile("org.springframework.boot:spring-boot-starter-tomcat")
     compile("com.google.code.gson:gson:${gsonVersion}")
     compile("com.google.guava:guava:${guavaVersion}")
 
+    compile("uk.co.caeldev:spring-morphia:0.1.0")
+    compile group: 'org.mongodb', name: 'mongo-java-driver', version: '3.3.0'
+
     compile("uk.co.caeldev:spring-mvc-utils:${springMvcUtilsVersion}")
 
     compile("org.apache.commons:commons-lang3:${apacheCommonsLang3Version}")
+    compile group: 'com.github.mideo', name:'salesforce-api-client', version: '0.0.1'
+    compile group: 'org.codehaus.groovy', name: 'groovy-all', version: '2.4.4'
+    compile group: 'org.codehaus.groovy', name: 'groovy-xml', version: '2.4.4'
+    compile group: 'net.sf.supercsv', name: 'super-csv', version: '2.4.0'
+    compile group: 'net.sf.supercsv', name: 'super-csv-java8', version: '2.4.0'
 
     testCompile("org.springframework.boot:spring-boot-starter-test")
     testCompile("org.assertj:assertj-core:${assertjCoreVersion}")
     testCompile("uk.org.fyodor:fyodor-core:${fyodorVersion}")
     testCompile("uk.org.fyodor:fyodor-junit:${fyodorVersion}")
-    testCompile("com.jayway.restassured:rest-assured:${restAssuredVersion}")
+    testCompile("io.rest-assured:rest-assured:${restAssuredVersion}")
     testCompile("com.github.tomakehurst:wiremock:${wiremockVersion}")
-    testCompile("info.cukes:cucumber-java:${cucumberVersion}")
-    testCompile("info.cukes:cucumber-junit:${cucumberVersion}")
-    testCompile("info.cukes:cucumber-spring:${cucumberVersion}")
+    testCompile("com.github.fakemongo:fongo:${fongoVersion}")
 }
 
 tasks.withType(Test) {
