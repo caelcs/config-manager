@@ -64,4 +64,35 @@ public class BuildConfigApiTest extends BaseIntegrationTest {
             .assertThat()
                 .statusCode(equalTo(CREATED.value()));
     }
+
+    @Test
+    public void shouldCreateBuildConfig() throws Exception {
+        //Given
+        final BuildConfig buildConfig = buildConfigBuilder().build();
+
+        given()
+            .port(serverPort)
+            .body(buildConfig)
+            .headers(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_UTF8_VALUE)
+        .when()
+            .post("/buildconfigs")
+        .then()
+            .assertThat()
+                .statusCode(equalTo(CREATED.value()));
+    }
+
+    @Test
+    public void shouldDeleteBuildConfig() {
+        //Given
+        final BuildConfig buildConfig = buildConfigBuilder().build();
+        buildConfigRepository.save(buildConfig);
+
+        given()
+            .port(serverPort)
+        .when()
+            .delete(String.format("/buildconfigs/%s", buildConfig.getEnvironment()))
+        .then()
+            .assertThat()
+                .statusCode(equalTo(NO_CONTENT.value()));
+    }
 }

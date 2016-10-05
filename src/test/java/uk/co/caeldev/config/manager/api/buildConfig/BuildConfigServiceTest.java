@@ -166,4 +166,39 @@ public class BuildConfigServiceTest {
         //Then
         verify(buildConfigRepository,never()).save(buildConfig);
     }
+    
+    @Test
+    public void shouldDeleteBuildConfig() {
+        // Given
+        String env = string().next();
+
+        //And
+        final BuildConfig expectedExistingBuildConfig = buildConfigBuilder().environment(env).build();
+        given(buildConfigRepository.findOne(env)).willReturn(Optional.of(expectedExistingBuildConfig));
+
+        // When
+        buildConfigService.deleteBuildConfig(env);
+
+        //Then
+        verify(buildConfigRepository).delete(env);
+    }
+
+    @Test
+    public void shouldFailDeleteBuildConfigWhenDoesNotExist() {
+        // Given
+        String env = string().next();
+
+        //And
+        given(buildConfigRepository.findOne(env)).willReturn(Optional.empty());
+
+        //Expect
+        thrown.expect(IllegalArgumentException.class);
+        thrown.expectMessage(BUILD_CONFIG_DOES_NOT_EXIST_DELETION_ABORTED);
+
+        // When
+        buildConfigService.deleteBuildConfig(env);
+
+        //Then
+        verify(buildConfigRepository, never()).delete(env);
+    }
 }

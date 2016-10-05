@@ -6,6 +6,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import java.util.Map;
@@ -14,6 +15,7 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.springframework.http.HttpStatus.*;
 import static uk.co.caeldev.config.manager.api.buildConfig.BuildConfigController.SOURCE_ENV_PARAM;
@@ -127,5 +129,33 @@ public class BuildConfigControllerTest {
 
         // Then
         assertThat(response.getStatusCode()).isEqualTo(INTERNAL_SERVER_ERROR);
+    }
+    
+    @Test
+    public void shouldDeleteBuildConfig() {
+        // Given
+        String env = string().next();
+
+        // When
+        final ResponseEntity response = buildConfigController.delete(env);
+        
+        // Then
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
+        verify(buildConfigService).deleteBuildConfig(env);
+    }
+
+    @Test
+    public void shouldFailDeleteWhenBuildConfigDoesNotExist() {
+        // Given
+        String env = string().next();
+
+        //And
+        doThrow(IllegalArgumentException.class).when(buildConfigService).deleteBuildConfig(env);
+
+        // When
+        final ResponseEntity response = buildConfigController.delete(env);
+
+        // Then
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
     }
 }

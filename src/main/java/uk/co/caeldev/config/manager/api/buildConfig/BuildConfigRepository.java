@@ -16,6 +16,7 @@ import static com.mongodb.client.model.Filters.eq;
 public class BuildConfigRepository {
 
     public static final String BUILD_CONFIG = "BuildConfig";
+    public static final String ENVIRONMENT = "environment";
 
     private final Gson gson;
     private final MongoDatabase db;
@@ -35,11 +36,15 @@ public class BuildConfigRepository {
     }
 
     public Optional<BuildConfig> findOne(String env) {
-        final Document buildConfigResult = db.getCollection(BUILD_CONFIG).find(eq("environment", env)).first();
+        final Document buildConfigResult = db.getCollection(BUILD_CONFIG).find(eq(ENVIRONMENT, env)).first();
         if (Objects.isNull(buildConfigResult)) {
             return Optional.empty();
         }
         final BuildConfig buildConfig = gson.fromJson(buildConfigResult.toJson(), BuildConfig.class);
         return Optional.ofNullable(buildConfig);
+    }
+
+    public void delete(String env) {
+        db.getCollection(BUILD_CONFIG).deleteOne(eq(ENVIRONMENT, env));
     }
 }

@@ -59,4 +59,14 @@ public class BuildConfigController {
             return new ResponseEntity<BuildConfig>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    @RequestMapping(value = "/buildconfigs/{env}", method = {RequestMethod.DELETE})
+    public ResponseEntity delete(@PathVariable String env) {
+        try {
+            buildConfigService.deleteBuildConfig(env);
+            return new ResponseEntity(HttpStatus.NO_CONTENT);
+        } catch(IllegalArgumentException ex) {
+            return new ResponseEntity(HttpStatus.NOT_FOUND);
+        }
+    }
 }
