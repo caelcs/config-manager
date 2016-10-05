@@ -12,9 +12,9 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
-import static uk.co.caeldev.config.manager.api.buildConfig.BuildConfigService.SOURCE_ENVIRONMENT_MUST_EXIST;
-import static uk.co.caeldev.config.manager.api.buildConfig.BuildConfigService.TARGET_ENVIRONMENT_MUST_NOT_EXIST;
+import static uk.co.caeldev.config.manager.api.buildConfig.BuildConfigService.*;
 import static uk.co.caeldev.config.manager.api.buildConfig.tests.BuildConfigBuilder.buildConfigBuilder;
 import static uk.org.fyodor.generators.RDG.string;
 
@@ -93,7 +93,7 @@ public class BuildConfigServiceTest {
     }
 
     @Test
-    public void shouldThrowExceptionWhenTargetBuildConfigDoesExist() throws Exception {
+    public void shouldThrowExceptionWhenCloneAndTargetBuildConfigDoesExist() throws Exception {
         //Given
         final String sourceEnv = string().next();
         final String targetEnv = string().next();
@@ -115,7 +115,7 @@ public class BuildConfigServiceTest {
     }
 
     @Test
-    public void shouldThrowExceptionWhenSourceBuildConfigDoesNotExist() throws Exception {
+    public void shouldThrowExceptionWhenCloneAndSourceBuildConfigDoesNotExist() throws Exception {
         //Given
         final String sourceEnv = string().next();
         final String targetEnv = string().next();
@@ -129,5 +129,41 @@ public class BuildConfigServiceTest {
 
         //When
         buildConfigService.cloneBuildConfig(sourceEnv, targetEnv);
+    }
+
+    @Test
+    public void shouldCreateBuildConfig() {
+        // Given
+        final BuildConfig buildConfig = buildConfigBuilder().build();
+
+        //And
+        given(buildConfigRepository.findOne(buildConfig.getEnvironment())).willReturn(Optional.empty());
+
+        // When
+        buildConfigService.create(buildConfig);
+
+        //Then
+        verify(buildConfigRepository).save(buildConfig);
+    }
+
+    @Test
+    public void shouldFailCreateBuildConfigWhenAlreadyExists() {
+        // Given
+        String env = string().next();
+        final BuildConfig buildConfig = buildConfigBuilder().environment(env).build();
+
+        //And
+        final BuildConfig expectedExistingBuildConfig = buildConfigBuilder().environment(env).build();
+        given(buildConfigRepository.findOne(env)).willReturn(Optional.of(expectedExistingBuildConfig));
+
+        //Expect
+        thrown.expect(IllegalArgumentException.class);
+        thrown.expectMessage(BUILD_CONFIGURATION_ALREADY_EXISTS);
+
+        // When
+        buildConfigService.create(buildConfig);
+
+        //Then
+        verify(buildConfigRepository,never()).save(buildConfig);
     }
 }

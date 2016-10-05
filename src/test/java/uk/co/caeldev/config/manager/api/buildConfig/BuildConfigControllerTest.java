@@ -116,7 +116,7 @@ public class BuildConfigControllerTest {
     }
 
     @Test
-    public void shouldFailWhenBuildConfigAlreadyExists() {
+    public void shouldFailCreateWhenBuildConfigAlreadyExists() {
         // Given
         final BuildConfig buildConfig = buildConfigBuilder().build();
 
