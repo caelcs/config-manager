@@ -58,14 +58,11 @@ public class BuildConfigRepository {
 
         final List<Bson> updates = buildConfig.getAttributes().entrySet()
                 .stream()
-                .map(entrySet -> set(entrySet.getKey(), entrySet.getValue()))
+                .map(entrySet -> set("attributes." + entrySet.getKey(), entrySet.getValue()))
                 .collect(Collectors.toList());
 
-        final Document buildConfigDoc = db.getCollection(BUILD_CONFIG).findOneAndUpdate(eq(ENVIRONMENT, env), combine(updates));
+        db.getCollection(BUILD_CONFIG).updateOne(eq(ENVIRONMENT, env), combine(updates));
 
-        if (Objects.isNull(buildConfigDoc)) {
-            return Optional.empty();
-        }
-        return Optional.of(gson.fromJson(buildConfigDoc.toJson(), BuildConfig.class));
+        return findOne(env);
     }
 }

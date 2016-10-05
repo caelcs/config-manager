@@ -10,6 +10,9 @@ import org.springframework.test.context.junit4.SpringRunner;
 import uk.co.caeldev.config.manager.api.BaseIntegrationTest;
 import uk.org.fyodor.generators.characters.CharacterSetFilter;
 
+import java.util.Map;
+import java.util.Map.Entry;
+
 import static io.restassured.RestAssured.given;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -103,7 +106,9 @@ public class BuildConfigApiTest extends BaseIntegrationTest {
         final BuildConfig buildConfig = buildConfigBuilder().build();
         buildConfigRepository.save(buildConfig);
 
-        final BuildConfig requestBody = buildConfigBuilder().environment(buildConfig.getEnvironment()).build();
+        final Entry<String, String> stringStringEntry = buildConfig.getAttributes().entrySet().stream().findFirst().get();
+        final Map<String, String> attributes = ImmutableMap.of(stringStringEntry.getKey(), "UPDATED", "TEST", "NEW VALUE");
+        final BuildConfig requestBody = buildConfigBuilder().environment(buildConfig.getEnvironment()).attributes(attributes).build();
 
         final BuildConfig result = given()
                 .port(serverPort)
@@ -116,7 +121,6 @@ public class BuildConfigApiTest extends BaseIntegrationTest {
                 .statusCode(equalTo(OK.value())).extract().body().as(BuildConfig.class);
 
         //Then
-        assertThat(result.getAttributes()).containsAllEntriesOf(buildConfig.getAttributes());
-        assertThat(result.getAttributes()).containsAllEntriesOf(requestBody.getAttributes());
+        assertThat(result.getAttributes()).containsAllEntriesOf(attributes);
     }
 }

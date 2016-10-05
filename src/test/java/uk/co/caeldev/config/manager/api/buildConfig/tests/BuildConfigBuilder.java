@@ -11,7 +11,7 @@ import static uk.org.fyodor.generators.RDG.string;
 public class BuildConfigBuilder {
 
     private String environment = string(5, CharacterSetFilter.LettersOnly).next();
-    private Map<String, String> attributes = map(string(15, CharacterSetFilter.DomainName), string()).next();
+    private Map<String, String> attributes = map(string(15, CharacterSetFilter.LettersOnly), string(15, CharacterSetFilter.LettersOnly)).next();
 
     BuildConfigBuilder() {
     }
@@ -29,6 +29,11 @@ public class BuildConfigBuilder {
 
     public BuildConfigBuilder environment(String environment) {
         this.environment = environment;
+        return this;
+    }
+
+    public BuildConfigBuilder attributes(final Map<String, String> attributes) {
+        this.attributes = attributes;
         return this;
     }
 }
