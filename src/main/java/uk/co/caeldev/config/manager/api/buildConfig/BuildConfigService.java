@@ -4,8 +4,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Optional;
 
+import static com.google.common.base.Preconditions.checkArgument;
+
 public class BuildConfigService {
 
+    public static final String SOURCE_ENVIRONMENT_MUST_EXIST = "Source Environment must EXIST.";
+    public static final String TARGET_ENVIRONMENT_MUST_NOT_EXIST = "Target Environment must NOT EXIST.";
     private final BuildConfigRepository buildConfigRepository;
 
     @Autowired
@@ -21,14 +25,17 @@ public class BuildConfigService {
         final Optional<BuildConfig> sourceBuildConfig = buildConfigRepository.findOne(sourceEnv);
         final Optional<BuildConfig> targetBuildConfig = buildConfigRepository.findOne(targetEnv);
 
-        if (!sourceBuildConfig.isPresent() || targetBuildConfig.isPresent()) {
-            throw new IllegalArgumentException();
-        }
+        checkArgument(sourceBuildConfig.isPresent(), SOURCE_ENVIRONMENT_MUST_EXIST);
+        checkArgument(!targetBuildConfig.isPresent(), TARGET_ENVIRONMENT_MUST_NOT_EXIST);
 
         final BuildConfig buildConfig = sourceBuildConfig.get();
         buildConfig.setEnvironment(targetEnv);
         buildConfigRepository.save(buildConfig);
 
         return buildConfig;
+    }
+
+    public void create(BuildConfig buildConfig) {
+
     }
 }

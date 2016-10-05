@@ -49,4 +49,14 @@ public class BuildConfigController {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    @RequestMapping(value = "/buildconfigs", method = {RequestMethod.POST}, consumes = {MediaType.APPLICATION_JSON_UTF8_VALUE}, produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
+    public ResponseEntity<BuildConfig> create(@RequestBody final BuildConfig buildConfig) {
+        try {
+            buildConfigService.create(buildConfig);
+            return new ResponseEntity<>(buildConfig, HttpStatus.CREATED);
+        } catch (IllegalArgumentException ex) {
+            return new ResponseEntity<BuildConfig>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 }
