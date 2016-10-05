@@ -10,6 +10,7 @@ public class BuildConfigService {
 
     public static final String SOURCE_ENVIRONMENT_MUST_EXIST = "Source Environment must EXIST.";
     public static final String TARGET_ENVIRONMENT_MUST_NOT_EXIST = "Target Environment must NOT EXIST.";
+    public static final String BUILD_CONFIGURATION_ALREADY_EXISTS = "Build configuration already exists";
     private final BuildConfigRepository buildConfigRepository;
 
     @Autowired
@@ -35,7 +36,11 @@ public class BuildConfigService {
         return buildConfig;
     }
 
-    public void create(BuildConfig buildConfig) {
+    public void create(final BuildConfig buildConfig) {
+        Optional<BuildConfig> existingBuildConfig = buildConfigRepository.findOne(buildConfig.getEnvironment());
 
+        checkArgument(!existingBuildConfig.isPresent(), BUILD_CONFIGURATION_ALREADY_EXISTS);
+
+        buildConfigRepository.save(buildConfig);
     }
 }
