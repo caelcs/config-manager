@@ -8,7 +8,10 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import uk.co.caeldev.config.manager.api.buildConfig.tests.BuildConfigBuilder;
+import uk.org.fyodor.generators.Generator;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -20,6 +23,7 @@ import static org.springframework.http.HttpStatus.*;
 import static uk.co.caeldev.config.manager.api.buildConfig.BuildConfigController.SOURCE_ENV_PARAM;
 import static uk.co.caeldev.config.manager.api.buildConfig.BuildConfigController.TARGET_ENV_PARAM;
 import static uk.co.caeldev.config.manager.api.buildConfig.tests.BuildConfigBuilder.buildConfigBuilder;
+import static uk.org.fyodor.generators.RDG.list;
 import static uk.org.fyodor.generators.RDG.string;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -190,5 +194,21 @@ public class BuildConfigControllerTest {
         // Then
         assertThat(response.getStatusCode()).isEqualTo(OK);
         assertThat(response.getBody()).isEqualTo(expectedBuildConfigUpdated);
+    }
+
+    @Test
+    public void shouldGetAllBuildConfigs() {
+        // Given
+        List<BuildConfig> expectedBuildConfigs = list(() -> buildConfigBuilder().build()).next();
+
+        //And
+        given(buildConfigService.getAll()).willReturn(expectedBuildConfigs);
+
+        // When
+        final ResponseEntity<List<BuildConfig>> result = buildConfigController.getAllBuildConfig();
+
+        // Then
+        assertThat(result.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(result.getBody()).containsAll(expectedBuildConfigs);
     }
 }

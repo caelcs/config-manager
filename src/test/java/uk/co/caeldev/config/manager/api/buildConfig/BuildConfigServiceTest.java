@@ -1,5 +1,6 @@
 package uk.co.caeldev.config.manager.api.buildConfig;
 
+import com.google.common.collect.Lists;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -8,6 +9,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -16,6 +18,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static uk.co.caeldev.config.manager.api.buildConfig.BuildConfigService.*;
 import static uk.co.caeldev.config.manager.api.buildConfig.tests.BuildConfigBuilder.buildConfigBuilder;
+import static uk.org.fyodor.generators.RDG.list;
 import static uk.org.fyodor.generators.RDG.string;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -234,5 +237,30 @@ public class BuildConfigServiceTest {
 
         //Then
         assertThat(buildConfigUpdated.isPresent()).isFalse();
+    }
+
+    @Test
+    public void shouldGetAllBuildConfigs() {
+        // Given
+        final List<BuildConfig> expectedBuildConfigs = list(() -> buildConfigBuilder().build()).next();
+        given(buildConfigRepository.findAll()).willReturn(expectedBuildConfigs);
+
+        // When
+        List<BuildConfig> result = buildConfigService.getAll();
+
+        // Then
+        assertThat(result).containsAll(expectedBuildConfigs);
+    }
+
+    @Test
+    public void shouldGetEmptyWhenThereIsNotBuildConfigs() {
+        // Given
+        given(buildConfigRepository.findAll()).willReturn(Lists.newArrayList());
+
+        // When
+        List<BuildConfig> result = buildConfigService.getAll();
+
+        // Then
+        assertThat(result).isEmpty();
     }
 }

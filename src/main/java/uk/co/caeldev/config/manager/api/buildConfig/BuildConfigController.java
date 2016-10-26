@@ -6,9 +6,11 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+@CrossOrigin(origins = "http://localhost:8888", maxAge = 3600)
 @RestController
 public class BuildConfigController {
 
@@ -32,6 +34,15 @@ public class BuildConfigController {
         }
 
         return ResponseEntity.ok(buildConfigOptional.get());
+    }
+
+    @RequestMapping(value = "/buildconfigs",
+            method = RequestMethod.GET,
+            produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
+    public ResponseEntity<List<BuildConfig>> getAllBuildConfig() {
+        List<BuildConfig> result = buildConfigService.getAll();
+
+        return ResponseEntity.ok(result);
     }
 
     @RequestMapping(value = "/buildconfigs/clone",
@@ -59,7 +70,7 @@ public class BuildConfigController {
             buildConfigService.create(buildConfig);
             return new ResponseEntity<>(buildConfig, HttpStatus.CREATED);
         } catch (IllegalArgumentException ex) {
-            return new ResponseEntity<BuildConfig>(HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 

@@ -10,11 +10,14 @@ import org.springframework.test.context.junit4.SpringRunner;
 import uk.co.caeldev.config.manager.api.BaseIntegrationTest;
 import uk.org.fyodor.generators.characters.CharacterSetFilter;
 
+import java.util.List;
+
 import static io.restassured.RestAssured.given;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.springframework.http.HttpStatus.*;
 import static uk.co.caeldev.config.manager.api.buildConfig.tests.BuildConfigBuilder.buildConfigBuilder;
+import static uk.org.fyodor.generators.RDG.list;
 import static uk.org.fyodor.generators.RDG.string;
 
 @RunWith(SpringRunner.class)
@@ -118,5 +121,40 @@ public class BuildConfigApiTest extends BaseIntegrationTest {
         //Then
         assertThat(result.getAttributes()).containsAllEntriesOf(buildConfig.getAttributes());
         assertThat(result.getAttributes()).containsAllEntriesOf(requestBody.getAttributes());
+    }
+
+    @Test
+    public void shouldGetAllBuildConfigs() {
+        //Given
+        final List<BuildConfig> buildConfigsPersisted = list(() -> buildConfigBuilder().build()).next();
+        buildConfigRepository.save(buildConfigsPersisted);
+
+        final List result = given()
+                .port(serverPort)
+                .headers(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_UTF8_VALUE)
+                .when()
+                .get("/buildconfigs")
+                .then()
+                .assertThat()
+                .statusCode(equalTo(OK.value())).extract().body().as(List.class);
+
+        //Then
+        assertThat(result).hasSameSizeAs(buildConfigsPersisted);
+    }
+
+    @Test
+    public void shouldGetEmptyWhenThereIsNoBuildConfigs() {
+        //Given
+        final List result = given()
+                .port(serverPort)
+                .headers(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_UTF8_VALUE)
+                .when()
+                .get("/buildconfigs")
+                .then()
+                .assertThat()
+                .statusCode(equalTo(OK.value())).extract().body().as(List.class);
+
+        //Then
+        assertThat(result).isEmpty();
     }
 }

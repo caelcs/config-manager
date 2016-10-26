@@ -2,6 +2,7 @@ package uk.co.caeldev.config.manager.api.buildConfig;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.List;
 import java.util.Optional;
 
 import static com.google.common.base.Preconditions.checkArgument;
@@ -55,5 +56,9 @@ public class BuildConfigService {
     public Optional<BuildConfig> update(String env,
                               final BuildConfig buildConfig) {
         return buildConfigRepository.findOneAndUpdate(env, buildConfig);
+    }
+
+    public List<BuildConfig> getAll() {
+        return buildConfigRepository.findAll();
     }
 }

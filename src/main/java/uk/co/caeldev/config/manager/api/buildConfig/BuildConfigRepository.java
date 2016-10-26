@@ -1,5 +1,6 @@
 package uk.co.caeldev.config.manager.api.buildConfig;
 
+import com.google.common.collect.Lists;
 import com.google.gson.Gson;
 import com.mongodb.MongoClient;
 import com.mongodb.client.MongoCollection;
@@ -40,6 +41,11 @@ public class BuildConfigRepository {
         buildConfigCollection.insertOne(document);
     }
 
+    public void save(List<BuildConfig> buildConfigs) {
+        final MongoCollection<Document> buildConfigCollection = db.getCollection(BUILD_CONFIG);
+        buildConfigs.stream().map(doc -> Document.parse(gson.toJson(doc))).forEach(buildConfigCollection::insertOne);
+    }
+
     public Optional<BuildConfig> findOne(String env) {
         final Document buildConfigResult = db.getCollection(BUILD_CONFIG).find(eq(ENVIRONMENT, env)).first();
         if (Objects.isNull(buildConfigResult)) {
@@ -67,5 +73,10 @@ public class BuildConfigRepository {
             return Optional.empty();
         }
         return Optional.of(gson.fromJson(buildConfigDoc.toJson(), BuildConfig.class));
+    }
+
+    public List<BuildConfig> findAll() {
+        List<Document> documents = Lists.newArrayList(db.getCollection(BUILD_CONFIG).find().iterator());
+        return documents.stream().map(doc -> gson.fromJson(doc.toJson(), BuildConfig.class)).collect(Collectors.toList());
     }
 }
