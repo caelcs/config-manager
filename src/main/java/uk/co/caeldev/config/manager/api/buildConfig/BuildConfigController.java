@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-@CrossOrigin(origins = "http://localhost:8888", maxAge = 3600)
+@CrossOrigin(origins = {"*"}, maxAge = 3600)
 @RestController
 public class BuildConfigController {
 
