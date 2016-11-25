@@ -5,8 +5,8 @@ import com.google.gson.Gson;
 import com.mongodb.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.result.UpdateResult;
 import org.bson.Document;
-import org.bson.conversions.Bson;
 import org.springframework.beans.factory.annotation.Autowired;
 import uk.co.caeldev.spring.moprhia.MongoSettings;
 
@@ -16,8 +16,6 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static com.mongodb.client.model.Filters.eq;
-import static com.mongodb.client.model.Updates.combine;
-import static com.mongodb.client.model.Updates.set;
 
 public class BuildConfigRepository {
 
@@ -33,6 +31,10 @@ public class BuildConfigRepository {
                                  final MongoSettings mongoSettings) {
         this.gson = gson;
         this.db = mongoClient.getDatabase(mongoSettings.getDatabase());
+    }
+
+    public void dropCollection() {
+        db.getCollection(BUILD_CONFIG).drop();
     }
 
     public void save(BuildConfig buildConfig) {
@@ -62,17 +64,15 @@ public class BuildConfigRepository {
     public Optional<BuildConfig> findOneAndUpdate(String env,
                                                   final BuildConfig buildConfig) {
 
-        final List<Bson> updates = buildConfig.getAttributes().entrySet()
-                .stream()
-                .map(entrySet -> set(entrySet.getKey(), entrySet.getValue()))
-                .collect(Collectors.toList());
+        final Document document = Document.parse(gson.toJson(buildConfig));
 
-        final Document buildConfigDoc = db.getCollection(BUILD_CONFIG).findOneAndUpdate(eq(ENVIRONMENT, env), combine(updates));
+        final UpdateResult updateResult = db.getCollection(BUILD_CONFIG).updateOne(eq(ENVIRONMENT, env), new Document("$set", document));
 
-        if (Objects.isNull(buildConfigDoc)) {
+        if (updateResult.getModifiedCount() == 0L) {
             return Optional.empty();
         }
-        return Optional.of(gson.fromJson(buildConfigDoc.toJson(), BuildConfig.class));
+
+        return findOne(env);
     }
 
     public List<BuildConfig> findAll() {

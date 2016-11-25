@@ -2,6 +2,7 @@ package uk.co.caeldev.config.manager.api.buildConfig;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.net.HttpHeaders;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +26,11 @@ public class BuildConfigApiTest extends BaseIntegrationTest {
 
     @Autowired
     private BuildConfigRepository buildConfigRepository;
+
+    @Before
+    public void testee() throws Exception {
+        buildConfigRepository.dropCollection();
+    }
 
     @Test
     public void shouldGetOneBuildConfigForEnvironment() {
@@ -119,7 +125,6 @@ public class BuildConfigApiTest extends BaseIntegrationTest {
                 .statusCode(equalTo(OK.value())).extract().body().as(BuildConfig.class);
 
         //Then
-        assertThat(result.getAttributes()).containsAllEntriesOf(buildConfig.getAttributes());
         assertThat(result.getAttributes()).containsAllEntriesOf(requestBody.getAttributes());
     }
 
