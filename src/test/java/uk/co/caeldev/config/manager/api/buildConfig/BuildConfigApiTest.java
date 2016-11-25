@@ -129,6 +129,26 @@ public class BuildConfigApiTest extends BaseIntegrationTest {
     }
 
     @Test
+    public void shouldNotUpdateTheSameBuildConfig() {
+        //Given
+        final BuildConfig buildConfig = buildConfigBuilder().build();
+        buildConfigRepository.save(buildConfig);
+
+        final BuildConfig result = given()
+                .port(serverPort)
+                .body(buildConfig)
+                .headers(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_UTF8_VALUE)
+                .when()
+                .post(String.format("/buildconfigs/%s", buildConfig.getEnvironment()))
+                .then()
+                .assertThat()
+                .statusCode(equalTo(OK.value())).extract().body().as(BuildConfig.class);
+
+        //Then
+        assertThat(result.getAttributes()).containsAllEntriesOf(buildConfig.getAttributes());
+    }
+
+    @Test
     public void shouldGetAllBuildConfigs() {
         //Given
         final List<BuildConfig> buildConfigsPersisted = list(() -> buildConfigBuilder().build()).next();

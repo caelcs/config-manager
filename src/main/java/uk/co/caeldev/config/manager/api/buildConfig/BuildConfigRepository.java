@@ -5,7 +5,6 @@ import com.google.gson.Gson;
 import com.mongodb.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
-import com.mongodb.client.result.UpdateResult;
 import org.bson.Document;
 import org.springframework.beans.factory.annotation.Autowired;
 import uk.co.caeldev.spring.moprhia.MongoSettings;
@@ -66,11 +65,7 @@ public class BuildConfigRepository {
 
         final Document document = Document.parse(gson.toJson(buildConfig));
 
-        final UpdateResult updateResult = db.getCollection(BUILD_CONFIG).updateOne(eq(ENVIRONMENT, env), new Document("$set", document));
-
-        if (updateResult.getModifiedCount() == 0L) {
-            return Optional.empty();
-        }
+        db.getCollection(BUILD_CONFIG).updateOne(eq(ENVIRONMENT, env), new Document("$set", document));
 
         return findOne(env);
     }
