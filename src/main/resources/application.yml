@@ -1,6 +1,8 @@
 mongo:
-  host: localhost
-  port: 27017
+  servers:
+    -
+      name: localhost
+      port: 27017
   database: development
   username: salesforceAdmin
   password: iamsalesforce
@@ -10,8 +12,27 @@ mongo:
 spring:
     profiles: test
 mongo:
-  host: test
-  port: 0
+  servers:
+    -
+      name:
+      port: 27017
   database: test
   username: test
   password: test
+
+---
+
+spring:
+    profiles: production
+
+mongo:
+  servers:
+    -
+      name: ${MONGO_SERVICE_SERVERS_0_NAME}
+      port: ${MONGO_SERVICE_SERVERS_0_PORT}
+    -
+      name: ${MONGO_SERVICE_SERVERS_1_NAME}
+      port: ${MONGO_SERVICE_SERVERS_1_PORT}
+  database: ${MONGO_SERVICE_DATABASE}
+  username: ${MONGO_SERVICE_USERNAME}
+  password: ${MONGO_SERVICE_PASSWORD}

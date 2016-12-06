@@ -28,6 +28,9 @@ mainClassName = 'uk.co.caeldev.config.manager.api.Application'
 repositories {
     jcenter()
     mavenCentral()
+    maven {
+        url "https://oss.sonatype.org/content/repositories/releases/"
+    }
 }
 
 configurations.all {
@@ -82,7 +85,7 @@ dependencies {
     compile("com.google.code.gson:gson:${gsonVersion}")
     compile("com.google.guava:guava:${guavaVersion}")
 
-    compile("uk.co.caeldev:spring-morphia:0.1.0")
+    compile("uk.co.caeldev:spring-morphia:0.1.1")
     compile group: 'org.mongodb', name: 'mongo-java-driver', version: '3.3.0'
 
     compile("uk.co.caeldev:spring-mvc-utils:${springMvcUtilsVersion}")
